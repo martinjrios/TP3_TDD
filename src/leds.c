@@ -13,11 +13,21 @@
 
 static uint16_t * puerto;
 
+/**
+ * @brief Inicializa los leds.
+ * 
+ * @param direccion Puntero a la direccion de memoria donde estaran los bits que controlan los leds.
+ */
 void LedsCreate(uint16_t * direccion) {
     puerto = direccion;
     *puerto = LEDS_ALL_OFF;
 }
 
+/**
+ * @brief Enciende un led especifico.
+ * 
+ * @param led El led que se desea encender.
+ */
 void LedsOn(int led) {
     if( IS_VALID_LED(led) ) {
         *puerto |= LED_TO_MASK(led);
@@ -27,6 +37,11 @@ void LedsOn(int led) {
     }
 }
 
+/**
+ * @brief Apaga un led especifico.
+ * 
+ * @param led El led que se desea apagar.
+ */
 void LedsOff(int led) {
     if( IS_VALID_LED(led) ) {
         *puerto &= ~LED_TO_MASK(led);
@@ -36,14 +51,29 @@ void LedsOff(int led) {
     }    
 }
 
+/**
+ * @brief Enciende todos los leds.
+ * 
+ */
 void LedsAllOn(void) {
     *puerto = LEDS_ALL_ON;
 }
 
+/**
+ * @brief Apaga todos los leds.
+ * 
+ */
 void LedsAllOff(void) {
     *puerto = LEDS_ALL_OFF;
 }
 
+/**
+ * @brief Consulta si un led especifico esta encendido.
+ * 
+ * @param led Numero de led al cual consultar el estado.
+ * @return true Si esta encendido.
+ * @return false Si esta apagado.
+ */
 bool LedsIsOn(int led) {
     if( IS_VALID_LED(led) ) {
         return((*puerto & LED_TO_MASK(led))>>(led - LEDS_OFFSET));
