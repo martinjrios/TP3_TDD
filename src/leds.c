@@ -10,6 +10,10 @@
 #define LED_TO_MASK(x)      (LED_ON_STATE << (x - LEDS_OFFSET))
 #define IS_VALID_LED(x)     ((x >= FIRST_LED) && (x <= LAST_LED)? true : false)
 #define ERROR_INVALID_LED   "Numero de led invalido"
+#define ASSERT_IS_VALID_LED(x, ...)  if(!IS_VALID_LED(led)) {       \
+    RegistrarMensaje(0, __FUNCTION__, __LINE__, ERROR_INVALID_LED); \
+    return __VA_ARGS__;                                             \
+}
 
 static uint16_t * puerto;
 
@@ -29,12 +33,8 @@ void LedsCreate(uint16_t * direccion) {
  * @param led El led que se desea encender.
  */
 void LedsOn(int led) {
-    if( IS_VALID_LED(led) ) {
-        *puerto |= LED_TO_MASK(led);
-    }
-    else {
-        RegistrarMensaje(0, __FUNCTION__, __LINE__, ERROR_INVALID_LED);
-    }
+    ASSERT_IS_VALID_LED(led)
+    *puerto |= LED_TO_MASK(led);
 }
 
 /**
@@ -43,12 +43,8 @@ void LedsOn(int led) {
  * @param led El led que se desea apagar.
  */
 void LedsOff(int led) {
-    if( IS_VALID_LED(led) ) {
-        *puerto &= ~LED_TO_MASK(led);
-    }
-    else {
-        RegistrarMensaje(0, __FUNCTION__, __LINE__, ERROR_INVALID_LED);
-    }    
+    ASSERT_IS_VALID_LED(led)  
+    *puerto &= ~LED_TO_MASK(led); 
 }
 
 /**
@@ -75,11 +71,6 @@ void LedsAllOff(void) {
  * @return false Si esta apagado.
  */
 bool LedsIsOn(int led) {
-    if( IS_VALID_LED(led) ) {
-        return((*puerto & LED_TO_MASK(led))>>(led - LEDS_OFFSET));
-    }
-    else {
-        RegistrarMensaje(0, __FUNCTION__, __LINE__, ERROR_INVALID_LED);
-        return false;
-    }          
+    ASSERT_IS_VALID_LED(led, false);
+    return((*puerto & LED_TO_MASK(led))>>(led - LEDS_OFFSET));       
 }
